@@ -73,6 +73,7 @@ class Solution:
             print("WARNING: value of alpha too large, influenced objective function! Optimal objective value: {}, "
                   "number of repeaters: {}".format(opt_obj_val, len(repeater_nodes_chosen)))
         self.overall_data['opt_obj_val'] = round(opt_obj_val, 3)
+        print("### repeater_nodes_chosen: " , repeater_nodes_chosen)
         return x_variables_chosen, repeater_nodes_chosen
 
     def _process_x_variables(self):
@@ -230,14 +231,14 @@ class Solution:
                                            node_shape='s', node_color=[[255 / 255, 120 / 255, 0 / 255]],
                                            label="End Node",
                                            linewidths=3)
-        end_nodes.set_edgecolor('K')
+        end_nodes.set_edgecolor('k')
         # Then draw the repeater nodes
         if self.repeater_nodes_chosen:
             rep_nodes = nx.draw_networkx_nodes(G=self.virtual_solution_graph, pos=pos, node_size=1500,
                                                node_shape='h', nodelist=self.repeater_nodes_chosen,
                                                node_color=[[0 / 255, 166 / 255, 214 / 255]], label="Repeater Node",
                                                linewidths=3)
-            rep_nodes.set_edgecolor('K')
+            rep_nodes.set_edgecolor('k')
         # Finally draw the elementary links
         nx.draw_networkx_edges(G=self.virtual_solution_graph, pos=pos, edgelist=self.used_elementary_links, width=8)
         # Draw all the node labels
@@ -261,7 +262,7 @@ class Solution:
             if node in self.formulation.graph_container.end_nodes:
                 labels[node] = node
             else:
-                labels[node] = ""
+                labels[node] = node
         # Empty figure
         fig, ax = plt.subplots(figsize=(7, 7))
         # First draw end nodes
@@ -299,10 +300,10 @@ class Solution:
         nx.draw_networkx_edges(G=self.formulation.graph_container.graph, pos=pos, edgelist=self.used_edges, width=8,
                                edge_color=[[0 / 255, 0 / 255, 0 / 255]])
         # Draw all the node labels
-        # label_pos = {city: [pos[city][0], pos[city][1] - 0.07] for city in pos}
-        # nx.draw_networkx_labels(G=self.program.graph_container.graph, pos=label_pos, labels=labels, font_size=11,
-        #                         font_weight="bold")
-        nx.draw_networkx_labels(G=self.formulation.graph_container.graph, pos=pos, labels=labels, font_size=30,
+        label_pos = {city: [pos[city][0], pos[city][1] - 0.07] for city in pos}
+        nx.draw_networkx_labels(G=self.formulation.graph_container.graph, pos=label_pos, labels=labels, font_size=6,
+                                font_weight="bold", font_family='serif')
+        nx.draw_networkx_labels(G=self.formulation.graph_container.graph, pos=pos, labels=labels, font_size=7,
                                 font_weight="bold", font_color="w", font_family='serif')
         plt.axis('off')
         margin = 0.33
@@ -335,3 +336,10 @@ class Solution:
                 minimum_edge_connectivity = edge_connectivity_this_pair
         avg_edge_connectivity = total_edge_connectivity / self.formulation.graph_container.num_unique_pairs
         return minimum_edge_connectivity, avg_edge_connectivity
+    def write_output(self):
+        fo = open("output.txt" , "a")
+        if self.repeater_nodes_chosen:
+            for node in self.repeater_nodes_chosen:
+                fo.write(str(node) + "\n")
+
+        fo.close()

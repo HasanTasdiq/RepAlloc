@@ -117,6 +117,10 @@ def read_graph_from_gml(file, draw=False):
         end_node_list = ["Asd001b", "Mt001a", "GN001A", "DT001A"]
     elif file_name == "SurfnetCore":
         end_node_list = ["Amsterdam 1", "Delft 1", "Groningen 1", "Maastricht", "Enschede 2"]
+    elif file_name == "Atmnet":
+        end_node_list = [ "Washington, DC", "Chicago", "Seattle" ]
+    elif file_name == "us_net":
+            end_node_list = ["N84838785_Reno" , "N86654057_Reno" , "N86791494_Detroit" , "N86791186_Detroit"]
     elif file_name == 'Colt':
         # The European Topology Zoo dataset
         # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),
@@ -230,10 +234,10 @@ def draw_graph(G):
     fig, ax = plt.subplots(figsize=(7, 7))
     end_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=end_nodes, node_shape='s', node_size=1500,
                                        node_color=[[1.0, 120 / 255, 0.]], label="End Node", linewidths=3)
-    end_nodes.set_edgecolor('K')
+    end_nodes.set_edgecolor('k')
     rep_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=repeater_nodes, node_size=1500,
                                        node_color=[[1, 1, 1]], label="Repeater Node")
-    rep_nodes.set_edgecolor('K')
+    rep_nodes.set_edgecolor('k')
     end_node_labels = {}
     repeater_node_labels = {}
     for node, nodedata in G.nodes.items():
@@ -242,9 +246,9 @@ def draw_graph(G):
             end_node_labels[node] = node
         else:
             repeater_node_labels[node] = node
-    nx.draw_networkx_labels(G=G, pos=pos, labels=end_node_labels, font_size=30, font_weight="bold", font_color="w",
+    nx.draw_networkx_labels(G=G, pos=pos, labels=end_node_labels, font_size=7, font_weight="bold", font_color="w",
                             font_family='serif')
-    # nx.draw_networkx_labels(G=G, pos=pos, labels=repeater_node_labels, font_size=30, font_weight="bold")
+    nx.draw_networkx_labels(G=G, pos=pos, labels=repeater_node_labels, font_size=5, font_weight="bold")
     nx.draw_networkx_edges(G=G, pos=pos, width=1)
     plt.axis('off')
     margin = 0.33

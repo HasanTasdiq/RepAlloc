@@ -89,12 +89,28 @@ def surfnet_solve():
     sol, comp_time = prog.solve()
     print("Computation Time:", comp_time)
     sol.draw_physical_solution_graph()
+    sol.write_output()
+
     # sol.draw_virtual_solution_graph()
 
+def solve_gml(network_name):
+    L_max, N_max = max_length_and_rate(target_fidelity=0.93,
+                                       target_rate=1,
+                                       elementary_link_fidelity=0.99,
+                                       number_of_modes=1000,
+                                       swap_probability=.5)
+    G = read_graph_from_gml(network_name, draw=False)
+    prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=N_max, D=1, K=2,
+                                alpha=1 / 75000)
+    sol, comp_time = prog.solve()
+    print("Computation Time:", comp_time)
+    # sol.draw_physical_solution_graph()
+    sol.write_output()
 
 if __name__ == "__main__":
-    surfnet_solve()
-    # solve_from_gml("Colt.gml", L_max=900, N_max=6, D=100, K=1, alpha=1 / 75000)
+    # surfnet_solve()
+    solve_gml('us_net.gml')
+    # solve_from_gml("Colt.gml", L_max=900, N_max=6, D=6, K=1, alpha=1 / 75000)
     # solve_on_unit_cube(L_max=0.9, N_max=3, D=6, K=1)
     # solve_with_random_graph()
     # compare_formulations()
