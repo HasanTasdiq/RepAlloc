@@ -98,8 +98,10 @@ class Formulation:
         if L_max < 0:
             raise ValueError("L_max must be a positive float.")
         for end_node in self.graph_container.end_nodes:
+            print("end nodes: " , end_node)
             for edge in self.graph_container.graph.edges(end_node):
                 edge_length = self.graph_container.graph[edge[0]][edge[1]]['length']
+                print("edge length: " , edge_length)
                 if edge_length <= L_max:
                     # There is at least one edge that can be used to 'leave' this node
                     break
