@@ -111,7 +111,7 @@ def read_graph_from_gml(file, draw=False):
 
     file_name = file[0:-4]
     print("reading from: " , file_name)
-    G = nx.read_gml(file)
+    # G = nx.read_gml(file)
   
     if file_name == 'Surfnet':
         # The Dutch Topology Zoo dataset
@@ -135,6 +135,8 @@ def read_graph_from_gml(file, draw=False):
     else:
         raise NotImplementedError("Dataset {} not implemented (no city list defined)".format(file_name))
     print("end nodes " , end_node_list)
+    G = nx.read_gml(file)
+
     pos = {}
     for node, nodedata in G.nodes.items():
         if "position" in nodedata:
