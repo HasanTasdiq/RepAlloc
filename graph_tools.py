@@ -123,7 +123,7 @@ def read_graph_from_gml(file, draw=False):
     elif file_name == "Atmnet":
         end_node_list = [ "Washington, DC", "Chicago", "Seattle" ]
     elif file_name == "us_net":
-            end_node_list = ["N97737" , "N540758" , "N101370" , "N220812"]
+            end_node_list = ["N97737" , "N540758" , "N97770" , "N97520"]
     elif file_name == 'Colt':
         # The European Topology Zoo dataset
         # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),
