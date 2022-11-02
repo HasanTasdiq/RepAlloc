@@ -108,8 +108,11 @@ class GraphContainer:
 
 
 def read_graph_from_gml(file, draw=False):
-    G = nx.read_gml(file)
+
     file_name = file[0:-4]
+    print("reading from: " , file_name)
+    G = nx.read_gml(file)
+  
     if file_name == 'Surfnet':
         # The Dutch Topology Zoo dataset
         end_node_list = ["Middelburg", "Groningen", "Maastricht", "Enschede", "Delft", "Amsterdam", "Utrecht", "Den_Helder"]
