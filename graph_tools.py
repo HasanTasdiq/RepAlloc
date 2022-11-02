@@ -134,6 +134,7 @@ def read_graph_from_gml(file, draw=False):
                          'Stuttgart']
     else:
         raise NotImplementedError("Dataset {} not implemented (no city list defined)".format(file_name))
+    print("end nodes " , end_node_list)
     pos = {}
     for node, nodedata in G.nodes.items():
         if "position" in nodedata:
