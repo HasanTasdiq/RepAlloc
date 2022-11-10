@@ -187,7 +187,7 @@ def add_quantum_repeater(G , L_max):
                 node_data = {}
                 dist = i * L_max
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
-                print("//// " ,lat1,lon1,lat2,lon2, lat3 , lon3 , dist)
+                # print("//// " ,lat1,lon1,lat2,lon2, lat3 , lon3 , dist)
                 node2 = "QN" +str(q_node) 
                 node_data['node'] = node2
                 node_data['Latitude'] = float(lat3)
@@ -208,6 +208,7 @@ def add_quantum_repeater(G , L_max):
     G.add_edges_from(q_node_edges)
     nx.set_node_attributes(G, pos, name='pos')
 
+    print("====================== number of nodes " , G.number_of_nodes() , " ===================================")
 
     # draw_graph(G)
 
