@@ -187,7 +187,7 @@ def add_quantum_repeater(G , L_max):
                 node_data = {}
                 dist = i * L_max
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
-                print("//// " ,lat1,lon1,lat2,lon2, lat3 , lon3)
+                print("//// " ,lat1,lon1,lat2,lon2, lat3 , lon3 , dist)
                 node2 = "QN" +str(q_node) 
                 node_data['node'] = node2
                 node_data['Latitude'] = float(lat3)
@@ -209,21 +209,36 @@ def add_quantum_repeater(G , L_max):
     nx.set_node_attributes(G, pos, name='pos')
 
 
-    draw_graph(G)
+    # draw_graph(G)
 
 
 
-def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist):
+def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     constant = np.pi / 180
-    angular = dist / 6371
-    a = np.sin(0 * angular) / np.sin(angular)
-    b = np.sin(1 * angular) / np.sin(angular)
-    x = a * np.cos(lat1* constant) * np.cos(lon1* constant) + b * np.cos(lat2* constant) * np.cos(lon2* constant)
-    y = a * np.cos(lat1* constant) * np.sin(lon1* constant) + b * np.cos(lat2* constant) * np.sin(lon2* constant)
-    z = a * np.sin(lat1* constant) + b * np.sin(lat2* constant)
-    lat3 = np.arctan2(z, np.sqrt(x * x + y * y))
-    lon3 = np.arctan2(y, x)
-    return lat3/constant , lon3/constant
+    R = 6371
+    φ1 = lat1 * constant
+    λ1 = lon1 * constant
+    φ2 = lat2 * constant
+    λ2 = lon2 * constant
+    y = np.sin(λ2-λ1) * np.cos(φ2);
+    x = np.cos(φ1)*np.sin(φ2) -  np.sin(φ1)*np.cos(φ2)*np.cos(λ2-λ1)
+    θ = np.arctan2(y, x)
+    brng = (θ*180/np.pi + 360) % 360;  #in degrees
+    brng = brng * constant
+
+    φ3 = np.arcsin( np.sin(φ1)*np.cos(d/R ) + np.cos(φ1)*np.sin(d/R )*np.cos(brng) )
+    λ3 = λ1 + np.arctan2(np.sin(brng)*np.sin(d/R )*np.cos(φ1),  np.cos(d/R )-np.sin(φ1)*np.sin(φ2));
+
+    return φ3/constant , λ3/constant
+
+    # a = np.sin(0 * angular) / np.sin(angular)
+    # b = np.sin(1 * angular) / np.sin(angular)
+    # x = a * np.cos(lat1* constant) * np.cos(lon1* constant) + b * np.cos(lat2* constant) * np.cos(lon2* constant)
+    # y = a * np.cos(lat1* constant) * np.sin(lon1* constant) + b * np.cos(lat2* constant) * np.sin(lon2* constant)
+    # z = a * np.sin(lat1* constant) + b * np.sin(lat2* constant)
+    # lat3 = np.arctan2(z, np.sqrt(x * x + y * y))
+    # lon3 = np.arctan2(y, x)
+    # return lat3/constant , lon3/constant
 
 
 
