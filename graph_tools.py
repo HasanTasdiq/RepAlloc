@@ -124,6 +124,8 @@ def read_graph_from_gml(file, draw=False):
         end_node_list = [ "Washington, DC", "Chicago", "Seattle" ]
     elif file_name == "us_net":
             end_node_list = ["N1520743" , "N365620" , "N1422231" , "N1372536"] # las vegas
+    elif file_name == "us_net105":
+            end_node_list = ["N525796" , "N525656"  , "N525773" , "N525700"]
     elif file_name == 'Colt':
         # The European Topology Zoo dataset
         # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),
@@ -138,10 +140,12 @@ def read_graph_from_gml(file, draw=False):
     G = nx.read_gml(file)
 
     pos = {}
+    with_lon = False
     for node, nodedata in G.nodes.items():
         if "position" in nodedata:
             pos[node] = ast.literal_eval(nodedata["position"])
         elif "Longitude" in nodedata and "Latitude" in nodedata:
+            with_lon = True
             pos[node] = [nodedata['Longitude'], nodedata['Latitude']]
         else:
             raise ValueError("Cannot determine node position.")
@@ -149,6 +153,17 @@ def read_graph_from_gml(file, draw=False):
             nodedata['type'] = 'end_node'
         else:
             nodedata['type'] = 'repeater_node'
+
+
+            # Add length parameter to edges if this is not defined yet
+    
+    for i, j in G.edges():
+        if 'length' not in G[i][j]:
+            if with_lon:
+                _compute_dist_lat_lon(G)
+            else:
+                _compute_dist_cartesian(G)
+            break
     nx.set_node_attributes(G, pos, name='pos')
     if draw:
         draw_graph(G)
@@ -262,3 +277,31 @@ def draw_graph(G):
     ax.axis('equal')
     fig.tight_layout()
     plt.show()
+
+    
+def _compute_dist_lat_lon(graph):
+    """Compute the distance in km between two points based on their latitude and longitude.
+        Assumes both are given in radians."""
+    R = 6371  # Radius of the earth in km
+    for edge in graph.edges():
+        node1, node2 = edge
+        lon1 = np.radians(graph.nodes[node1]['Longitude'])
+        lon2 = np.radians(graph.nodes[node2]['Longitude'])
+        lat1 = np.radians(graph.nodes[node1]['Latitude'])
+        lat2 = np.radians(graph.nodes[node2]['Latitude'])
+        delta_lat = lat2 - lat1
+        delta_lon = lon2 - lon1
+        a = np.sin(delta_lat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * (np.sin(delta_lon / 2) ** 2)
+        c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
+        dist = np.round(R * c, 5)
+        graph.edges[node1, node2]['length'] = dist
+
+    
+def _compute_dist_cartesian(graph):
+    """Compute the distance in km between two points based on their Cartesian coordinates."""
+    for edge in graph.edges():
+        node1, node2 = edge
+        dx = np.abs(graph.nodes[node1]['xcoord'] - graph.nodes[node2]['xcoord'])
+        dy = np.abs(graph.nodes[node1]['ycoord'] - graph.nodes[node2]['ycoord'])
+        dist = np.round(np.sqrt(np.square(dx) + np.square(dy)), 5)
+        graph.edges[node1, node2]['length'] = dist
