@@ -175,9 +175,10 @@ def add_quantum_repeater(G , L_max):
     q_node_list = []
     q_node_edges = []
     pos = nx.get_node_attributes(G, 'pos')
+    done_dest_node = {}
     for i, j in G.edges():
         length = G[i][j]['length']
-        if length > L_max:
+        if length > L_max and (not (j in done_dest_node)):
             lat1 = G.nodes[i]['Latitude']
             lon1 = G.nodes[i]['Longitude']
             lat2 = G.nodes[j]['Latitude']
@@ -199,6 +200,7 @@ def add_quantum_repeater(G , L_max):
                 node1 = node2
                 q_node += 1
             q_node_edges.append((node2 , j))
+            done_dest_node[j] = 1
 
     for node_data in q_node_list:
         G.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
