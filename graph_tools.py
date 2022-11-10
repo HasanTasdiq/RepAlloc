@@ -35,6 +35,7 @@ class GraphContainer:
         self.graph = graph
         self.end_nodes = []
         self.possible_rep_nodes = []
+        add_quantum_repeater(graph , 136)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
@@ -168,6 +169,62 @@ def read_graph_from_gml(file, draw=False):
     if draw:
         draw_graph(G)
     return G
+
+def add_quantum_repeater(G , L_max):
+    q_node  = 0
+    q_node_list = []
+    q_node_edges = []
+    pos = nx.get_node_attributes(G, 'pos')
+    for i, j in G.edges():
+        length = G[i][j]['length']
+        if length > L_max:
+            lat1 = G.nodes[i]['Latitude']
+            lon1 = G.nodes[i]['Longitude']
+            lat2 = G.nodes[j]['Latitude']
+            lon2 = G.nodes[j]['Longitude']
+            node1 = i
+            for i in range(1 ,  int(length / L_max)):
+                node_data = {}
+                dist = i * L_max
+                lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
+                print("//// " ,lat1,lon1,lat2,lon2, lat3 , lon3)
+                node2 = "QN" +str(q_node) 
+                node_data['node'] = node2
+                node_data['Latitude'] = float(lat3)
+                node_data['Longitude'] = float(lon3)
+
+
+                q_node_list.append(node_data)
+                q_node_edges.append((node1 , node2))
+                node1 = node2
+                q_node += 1
+            q_node_edges.append((node2 , j))
+
+    for node_data in q_node_list:
+        G.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
+        G.nodes[node_data['node']]['type'] = 'repeater_node'
+        pos[node_data['node']] = [node_data['Longitude'], node_data['Latitude']]
+
+    G.add_edges_from(q_node_edges)
+    nx.set_node_attributes(G, pos, name='pos')
+
+
+    draw_graph(G)
+
+
+
+def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist):
+    constant = np.pi / 180
+    angular = dist / 6371
+    a = np.sin(0 * angular) / np.sin(angular)
+    b = np.sin(1 * angular) / np.sin(angular)
+    x = a * np.cos(lat1* constant) * np.cos(lon1* constant) + b * np.cos(lat2* constant) * np.cos(lon2* constant)
+    y = a * np.cos(lat1* constant) * np.sin(lon1* constant) + b * np.cos(lat2* constant) * np.sin(lon2* constant)
+    z = a * np.sin(lat1* constant) + b * np.sin(lat2* constant)
+    lat3 = np.arctan2(z, np.sqrt(x * x + y * y))
+    lon3 = np.arctan2(y, x)
+    return lat3/constant , lon3/constant
+
 
 
 def create_graph_on_unit_cube(n_repeaters, radius, draw, seed=2):
