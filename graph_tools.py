@@ -171,6 +171,8 @@ def read_graph_from_gml(file, draw=False):
     return G
 
 def add_quantum_repeater(G , L_max):
+    print("====================== number of nodes " , G.number_of_nodes() , " ===================================")
+
     q_node  = 0
     q_node_list = []
     q_node_edges = []
@@ -178,6 +180,8 @@ def add_quantum_repeater(G , L_max):
     done_dest_node = {}
     for i, j in G.edges():
         length = G[i][j]['length']
+        print("len " , length )
+
         if length > L_max and (not (j in done_dest_node)):
             lat1 = G.nodes[i]['Latitude']
             lon1 = G.nodes[i]['Longitude']
@@ -212,7 +216,7 @@ def add_quantum_repeater(G , L_max):
 
     print("====================== number of nodes " , G.number_of_nodes() , " ===================================")
 
-    # draw_graph(G)
+    draw_graph(G)
 
 
 
