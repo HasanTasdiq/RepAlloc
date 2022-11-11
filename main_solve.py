@@ -83,7 +83,7 @@ def surfnet_solve():
                                        elementary_link_fidelity=0.99,
                                        number_of_modes=1000,
                                        swap_probability=.5)
-    G = read_graph_from_gml('SurfnetCore.gml', draw=False)
+    G = read_graph_from_gml('SurfnetCore.gml', draw=True)
     prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=N_max, D=4, K=2,
                                 alpha=1 / 75000)
     sol, comp_time = prog.solve()
@@ -100,7 +100,7 @@ def solve_gml(network_name):
                                        number_of_modes=1000,
                                        swap_probability=.5)
     G = read_graph_from_gml(network_name, draw=False)
-    prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=N_max, D=1, K=2,
+    prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=20, D=1, K=2,
                                 alpha=1 / 75000)
     sol, comp_time = prog.solve()
     print("Computation Time:", comp_time)
