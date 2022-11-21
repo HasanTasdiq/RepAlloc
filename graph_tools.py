@@ -35,7 +35,7 @@ class GraphContainer:
         self.graph = graph
         self.end_nodes = []
         self.possible_rep_nodes = []
-        add_quantum_repeater(graph , 136)
+        # add_quantum_repeater(graph , 130)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
@@ -45,6 +45,7 @@ class GraphContainer:
         if self.num_end_nodes == 0:
             raise ValueError("Must have at least one city.")
         self.num_repeater_nodes = len(self.possible_rep_nodes)
+        print("num_repeater_nodes " , self.num_repeater_nodes)
         if self.num_repeater_nodes == 0:
             # Trivial graph
             return
@@ -122,11 +123,13 @@ def read_graph_from_gml(file, draw=False):
     elif file_name == "SurfnetCore":
         end_node_list = ["Amsterdam 1", "Delft 1", "Groningen 1", "Maastricht", "Enschede 2"]
     elif file_name == "Atmnet":
-        end_node_list = [ "Washington, DC", "Chicago", "Seattle" ]
+        end_node_list = [ "Detroit", "Pittsburgh" , "Houston"]
     elif file_name == "us_net":
             end_node_list = ["N1520743" , "N365620" , "N1422231" , "N1372536"] # las vegas
     elif file_name == "us_net105":
             end_node_list = ["N525796" , "N525656"  , "N525773" , "N525700"]
+    elif file_name == "us_netNV":
+            end_node_list = ["N43340" , "N24171984" , "N31868" , "N2498825" ]
     elif file_name == 'Colt':
         # The European Topology Zoo dataset
         # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),
@@ -171,20 +174,27 @@ def read_graph_from_gml(file, draw=False):
     return G
 
 def add_quantum_repeater(G , L_max):
+    print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
+
     q_node  = 0
     q_node_list = []
     q_node_edges = []
     pos = nx.get_node_attributes(G, 'pos')
     done_dest_node = {}
+    end_nodes = ["Detroit" , "Pittsburgh"]
     for i, j in G.edges():
+
         length = G[i][j]['length']
-        if length > L_max and (not (j in done_dest_node)):
+        if i in end_nodes or j in end_nodes:
+            print("eeennnddd " , i , j , length)
+        if length > L_max :
+        # if length > L_max and (not (j in done_dest_node)):
             lat1 = G.nodes[i]['Latitude']
             lon1 = G.nodes[i]['Longitude']
             lat2 = G.nodes[j]['Latitude']
             lon2 = G.nodes[j]['Longitude']
             node1 = i
-            for i in range(1 ,  int(length / L_max)):
+            for i in range(1 ,  int(length / L_max) + 1):
                 node_data = {}
                 dist = i * L_max
                 lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
@@ -210,9 +220,9 @@ def add_quantum_repeater(G , L_max):
     G.add_edges_from(q_node_edges)
     nx.set_node_attributes(G, pos, name='pos')
 
-    print("====================== number of nodes " , G.number_of_nodes() , " ===================================")
+    print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
 
-    # draw_graph(G)
+    draw_graph(G)
 
 
 
@@ -223,14 +233,14 @@ def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
     λ1 = lon1 * constant
     φ2 = lat2 * constant
     λ2 = lon2 * constant
-    y = np.sin(λ2-λ1) * np.cos(φ2);
+    y = np.sin(λ2-λ1) * np.cos(φ2)
     x = np.cos(φ1)*np.sin(φ2) -  np.sin(φ1)*np.cos(φ2)*np.cos(λ2-λ1)
     θ = np.arctan2(y, x)
     brng = (θ*180/np.pi + 360) % 360;  #in degrees
     brng = brng * constant
 
     φ3 = np.arcsin( np.sin(φ1)*np.cos(d/R ) + np.cos(φ1)*np.sin(d/R )*np.cos(brng) )
-    λ3 = λ1 + np.arctan2(np.sin(brng)*np.sin(d/R )*np.cos(φ1),  np.cos(d/R )-np.sin(φ1)*np.sin(φ2));
+    λ3 = λ1 + np.arctan2(np.sin(brng)*np.sin(d/R )*np.cos(φ1),  np.cos(d/R )-np.sin(φ1)*np.sin(φ2))
 
     return φ3/constant , λ3/constant
 
