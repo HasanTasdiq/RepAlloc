@@ -130,6 +130,12 @@ def read_graph_from_gml(file, draw=False):
             end_node_list = ["N525796" , "N525656"  , "N525773" , "N525700"]
     elif file_name == "us_netNV":
             end_node_list = ["N43340" , "N24171984" , "N31868" , "N2498825" ]
+    elif file_name == "us_netNY":
+            end_node_list = ["N79835126" , "N84496333" , "N50410"  ]
+    elif file_name == "us_netUT":
+            end_node_list = ["N12408" , "N61311" , "N3941087"  ]
+    elif file_name == "es_net":
+            end_node_list = ["PNNL" , "LBNL" , "PANTEX" , "FNAL" , "LNS"  ]
     elif file_name == 'Colt':
         # The European Topology Zoo dataset
         # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),
