@@ -462,6 +462,14 @@ graph [
     source 7
     target 8
   ]
+    edge [
+    source 13
+    target 8
+  ]
+  edge [
+    source 14
+    target 15
+  ]
   edge [
     source 3
     target 9
@@ -670,11 +678,19 @@ graph [
 
   edge [
     source 51
-    target 42
+    target 52
   ]
   edge [
     source 51
-    target 43
+    target 53
+  ]
+    edge [
+    source 51
+    target 54
+  ]
+    edge [
+    source 51
+    target 50
   ]
   edge [
     source 53

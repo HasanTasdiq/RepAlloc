@@ -35,7 +35,7 @@ class GraphContainer:
         self.graph = graph
         self.end_nodes = []
         self.possible_rep_nodes = []
-        # add_quantum_repeater(graph , 130)
+        add_quantum_repeater(graph , 130)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
@@ -135,7 +135,7 @@ def read_graph_from_gml(file, draw=False):
     elif file_name == "us_netUT":
             end_node_list = ["N12408" , "N61311" , "N3941087"  ]
     elif file_name == "es_net":
-            end_node_list = ["PNNL" , "LBNL" , "PANTEX" , "FNAL" , "LNS"  ]
+            end_node_list = ["PNNL" , "LBNL" , "FNAL" , "LNS"  ]
     elif file_name == 'Colt':
         # The European Topology Zoo dataset
         # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),
