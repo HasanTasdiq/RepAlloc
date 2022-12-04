@@ -8,15 +8,15 @@ graph [
   ]
   node [
     id 1
-    label "LIGO Hanford Washington Observatory"
-    label2 "LIGO"
+    label2 "LIGO Hanford Washington Observatory"
+    label "LIGO"
     Longitude -119.39217767817301
     Latitude 46.483812338320355
   ]
   node [
     id 2
-    label "National Energy Technology Laboratory Albany"
-    label2 "NETL-ALB"
+    label2 "National Energy Technology Laboratory Albany"
+    label "NETL-ALB"
     Longitude -123.12057604389135
     Latitude 44.623553829297705
   ]
@@ -267,7 +267,7 @@ graph [
   ]
   node [
     id 39
-    label "START"
+    label "STAR"
     label2 "StarLight Exchange Point"
     Longitude -85.89294070157675
     Latitude 38.41539838667115
@@ -433,6 +433,13 @@ graph [
     Longitude -71.09128900162182
     Latitude 42.361109322112604
   ]
+    node [
+    id 63
+    label "JLAB"
+    label2 "Thomas Jefferson National Accelerator Facility"
+    Longitude -76.48162293058456
+    Latitude 37.09461726186382
+  ]
   
   edge [
     source 0
@@ -480,7 +487,7 @@ graph [
   ]
   edge [
     source 8
-    target 9
+    target 10
   ]
   edge [
     source 9
@@ -505,6 +512,10 @@ graph [
   ]
   edge [
     source 19
+    target 14
+  ]
+  edge [
+    source 3
     target 14
   ]
   edge [
@@ -537,6 +548,10 @@ graph [
   ]
   edge [
     source 19
+    target 25
+  ]
+  edge [
+    source 3
     target 25
   ]
   edge [
@@ -583,13 +598,18 @@ graph [
     source 31
     target 32
   ]
-  edge [
-    source 33
-    target 32
+    edge [
+    source 31
+    target 33
   ]
+
   edge [
     source 34
     target 35
+  ]
+    edge [
+    source 34
+    target 27
   ]
   edge [
     source 34
@@ -598,6 +618,10 @@ graph [
   edge [
     source 34
     target 31
+  ]
+  edge [
+    source 34
+    target 49
   ]
   edge [
     source 39
@@ -736,15 +760,15 @@ graph [
     source 39
     target 59
   ]
-    edge [
+  edge [
     source 60
     target 61
   ]
-    edge [
+  edge [
     source 60
     target 62
   ]
-    edge [
+  edge [
     source 60
     target 39
   ]
@@ -752,9 +776,13 @@ graph [
     source 60
     target 50
   ]
-    edge [
+  edge [
     source 60
     target 59
+  ]
+  edge [
+    source 63
+    target 49
   ]
 
 

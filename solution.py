@@ -261,26 +261,26 @@ class Solution:
         for node, nodedata in self.formulation.graph_container.graph.nodes.items():
             if node in self.formulation.graph_container.end_nodes:
                 labels[node] = node
-            else:
+            elif node not in self.formulation.graph_container.new_nodes:
                 labels[node] = node
         # Empty figure
         fig, ax = plt.subplots(figsize=(7, 7))
         # First draw end nodes
-        end_nodes = nx.draw_networkx_nodes(G=self.formulation.graph_container.graph, pos=pos, node_size=1500,
+        end_nodes = nx.draw_networkx_nodes(G=self.formulation.graph_container.graph, pos=pos, node_size=150,
                                            nodelist=self.formulation.graph_container.end_nodes,
                                            node_shape='s', node_color=[[255 / 255, 120 / 255, 0 / 255]],
                                            label="End Node", linewidths=3)
         end_nodes.set_edgecolor('k')
         # Then draw the repeater nodes
         if self.repeater_nodes_chosen:
-            rep_nodes = nx.draw_networkx_nodes(G=self.formulation.graph_container.graph, pos=pos, node_size=1500,
+            rep_nodes = nx.draw_networkx_nodes(G=self.formulation.graph_container.graph, pos=pos, node_size=150,
                                                node_shape='h', nodelist=self.repeater_nodes_chosen,
                                                node_color=[[0 / 255, 166 / 255, 214 / 255]], label="Repeater Node",
                                                linewidths=3)
             rep_nodes.set_edgecolor('k')
         # Then draw the link-extension nodes
         if self.link_extension_nodes:
-            le_nodes = nx.draw_networkx_nodes(G=self.formulation.graph_container.graph, pos=pos, node_size=1500,
+            le_nodes = nx.draw_networkx_nodes(G=self.formulation.graph_container.graph, pos=pos, node_size=150,
                                               nodelist=self.link_extension_nodes, node_color=[[1, 1, 1]],
                                               label="Link Extension")
             le_nodes.set_edgecolor('k')
@@ -288,9 +288,9 @@ class Solution:
         unused_nodes = []
         [unused_nodes.append(n) for n in self.formulation.graph_container.graph.nodes() if
          (n not in self.link_extension_nodes and n not in self.repeater_nodes_chosen
-          and n not in self.formulation.graph_container.end_nodes)]
+          and n not in self.formulation.graph_container.end_nodes and n not in self.formulation.graph_container.new_nodes)]
         if unused_nodes:
-            unu_nodes = nx.draw_networkx_nodes(G=self.formulation.graph_container.graph, pos=pos, node_size=1500,
+            unu_nodes = nx.draw_networkx_nodes(G=self.formulation.graph_container.graph, pos=pos, node_size=150,
                                                nodelist=unused_nodes, node_color=[[1, 1, 1]])
             unu_nodes.set_edgecolor('k')
         # Draw the unused edges but less visible

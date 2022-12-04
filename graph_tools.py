@@ -34,8 +34,9 @@ class GraphContainer:
     def __init__(self, graph):
         self.graph = graph
         self.end_nodes = []
+        self.new_nodes = []
         self.possible_rep_nodes = []
-        add_quantum_repeater(graph , 130)
+        self.add_quantum_repeater(graph , 130)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
@@ -108,6 +109,58 @@ class GraphContainer:
         print("Maximum edge length is ", max_length)
         print("Minimum edge length is ", min_length)
 
+    def add_quantum_repeater(self, G , L_max):
+        print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
+
+        q_node  = 0
+        q_node_list = []
+        q_node_edges = []
+        pos = nx.get_node_attributes(G, 'pos')
+        done_dest_node = {}
+        end_nodes = ["Detroit" , "Pittsburgh"]
+        for i, j in G.edges():
+
+            length = G[i][j]['length']
+            if i in end_nodes or j in end_nodes:
+                print("eeennnddd " , i , j , length)
+            if length > L_max :
+            # if length > L_max and (not (j in done_dest_node)):
+                lat1 = G.nodes[i]['Latitude']
+                lon1 = G.nodes[i]['Longitude']
+                lat2 = G.nodes[j]['Latitude']
+                lon2 = G.nodes[j]['Longitude']
+                node1 = i
+                for i in range(1 ,  int(length / L_max) + 1):
+                    node_data = {}
+                    dist = i * L_max
+                    lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
+                    # print("//// " ,lat1,lon1,lat2,lon2, lat3 , lon3 , dist)
+                    node2 = "QN" +str(q_node) 
+                    node_data['node'] = node2
+                    node_data['Latitude'] = float(lat3)
+                    node_data['Longitude'] = float(lon3)
+
+
+                    q_node_list.append(node_data)
+                    q_node_edges.append((node1 , node2))
+                    node1 = node2
+                    q_node += 1
+                q_node_edges.append((node2 , j))
+                done_dest_node[j] = 1
+
+        for node_data in q_node_list:
+            G.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
+            G.nodes[node_data['node']]['type'] = 'new_repeater_node'
+            pos[node_data['node']] = [node_data['Longitude'], node_data['Latitude']]
+            self.new_nodes.append(node_data['node'])
+
+        G.add_edges_from(q_node_edges)
+        nx.set_node_attributes(G, pos, name='pos')
+
+        print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
+
+        draw_graph(G)
+
 
 def read_graph_from_gml(file, draw=False):
 
@@ -135,7 +188,7 @@ def read_graph_from_gml(file, draw=False):
     elif file_name == "us_netUT":
             end_node_list = ["N12408" , "N61311" , "N3941087"  ]
     elif file_name == "es_net":
-            end_node_list = ["PNNL" , "LBNL" , "FNAL" , "LNS"  ]
+            end_node_list = ["KANS" , "HOUS" ]
     elif file_name == 'Colt':
         # The European Topology Zoo dataset
         # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),
@@ -179,56 +232,7 @@ def read_graph_from_gml(file, draw=False):
         draw_graph(G)
     return G
 
-def add_quantum_repeater(G , L_max):
-    print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
 
-    q_node  = 0
-    q_node_list = []
-    q_node_edges = []
-    pos = nx.get_node_attributes(G, 'pos')
-    done_dest_node = {}
-    end_nodes = ["Detroit" , "Pittsburgh"]
-    for i, j in G.edges():
-
-        length = G[i][j]['length']
-        if i in end_nodes or j in end_nodes:
-            print("eeennnddd " , i , j , length)
-        if length > L_max :
-        # if length > L_max and (not (j in done_dest_node)):
-            lat1 = G.nodes[i]['Latitude']
-            lon1 = G.nodes[i]['Longitude']
-            lat2 = G.nodes[j]['Latitude']
-            lon2 = G.nodes[j]['Longitude']
-            node1 = i
-            for i in range(1 ,  int(length / L_max) + 1):
-                node_data = {}
-                dist = i * L_max
-                lat3 , lon3 = get_intermediate_point(lat1 , lon1 , lat2 , lon2 , dist)
-                # print("//// " ,lat1,lon1,lat2,lon2, lat3 , lon3 , dist)
-                node2 = "QN" +str(q_node) 
-                node_data['node'] = node2
-                node_data['Latitude'] = float(lat3)
-                node_data['Longitude'] = float(lon3)
-
-
-                q_node_list.append(node_data)
-                q_node_edges.append((node1 , node2))
-                node1 = node2
-                q_node += 1
-            q_node_edges.append((node2 , j))
-            done_dest_node[j] = 1
-
-    for node_data in q_node_list:
-        G.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
-        G.nodes[node_data['node']]['type'] = 'repeater_node'
-        pos[node_data['node']] = [node_data['Longitude'], node_data['Latitude']]
-
-    G.add_edges_from(q_node_edges)
-    nx.set_node_attributes(G, pos, name='pos')
-
-    print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
-
-    draw_graph(G)
 
 
 
@@ -339,15 +343,15 @@ def draw_graph(G):
     repeater_nodes = []
     end_nodes = []
     for node in G.nodes():
-        if G.nodes[node]['type'] == 'repeater_node':
+        if G.nodes[node]['type'] == 'repeater_node' or G.nodes[node]['type'] == 'new_repeater_node':
             repeater_nodes.append(node)
         else:
             end_nodes.append(node)
     fig, ax = plt.subplots(figsize=(7, 7))
-    end_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=end_nodes, node_shape='s', node_size=1500,
+    end_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=end_nodes, node_shape='s', node_size=150,
                                        node_color=[[1.0, 120 / 255, 0.]], label="End Node", linewidths=3)
     end_nodes.set_edgecolor('k')
-    rep_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=repeater_nodes, node_size=1500,
+    rep_nodes = nx.draw_networkx_nodes(G=G, pos=pos, nodelist=repeater_nodes, node_size=150,
                                        node_color=[[1, 1, 1]], label="Repeater Node")
     rep_nodes.set_edgecolor('k')
     end_node_labels = {}
