@@ -188,7 +188,7 @@ def read_graph_from_gml(file, draw=False):
     elif file_name == "us_netUT":
             end_node_list = ["N12408" , "N61311" , "N3941087"  ]
     elif file_name == "es_net":
-            end_node_list = ["KANS" , "HOUS" ]
+            end_node_list = ["CHIC" , "ATLA" ]
     elif file_name == 'Colt':
         # The European Topology Zoo dataset
         # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),

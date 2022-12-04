@@ -615,7 +615,10 @@ graph [
     source 34
     target 33
   ]
-
+  edge [
+    source 34
+    target 31
+  ]
   edge [
     source 34
     target 49
