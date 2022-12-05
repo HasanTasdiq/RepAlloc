@@ -36,16 +36,20 @@ class GraphContainer:
         self.end_nodes = []
         self.new_nodes = []
         self.possible_rep_nodes = []
+        self.new_possible_rep_nodes = []
         self.add_quantum_repeater(graph , 130)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
+            elif nodedata["type"] == 'new_repeater_node':
+                self.new_possible_rep_nodes.append(node)
             else:
                 self.possible_rep_nodes.append(node)
+        print("****^^^ " , len(self.new_possible_rep_nodes) , len(self.possible_rep_nodes))
         self.num_end_nodes = len(self.end_nodes)
         if self.num_end_nodes == 0:
             raise ValueError("Must have at least one city.")
-        self.num_repeater_nodes = len(self.possible_rep_nodes)
+        self.num_repeater_nodes = len(self.possible_rep_nodes) + len(self.new_possible_rep_nodes)
         print("num_repeater_nodes " , self.num_repeater_nodes)
         if self.num_repeater_nodes == 0:
             # Trivial graph

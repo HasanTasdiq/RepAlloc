@@ -152,9 +152,10 @@ class LinkBasedFormulation(Formulation):
         # Use some local references for shorter notation
         prob = self.cplex
         rep_nodes = self.graph_container.possible_rep_nodes
+        new_rep_nodes = self.graph_container.new_possible_rep_nodes
         num_repeater_nodes = self.graph_container.num_repeater_nodes
         # Constraints for linking the x and y variables
-        link_xy_con_names = ['LinkXYCon_' + s for s in rep_nodes]
+        link_xy_con_names = ['LinkXYCon_' + s for s in rep_nodes + new_rep_nodes]
         prob.linear_constraints.add(rhs=[0] * num_repeater_nodes, senses=['L'] * num_repeater_nodes,
                                     names=link_xy_con_names)
         # Add constraints per unique pair and for every value of K
@@ -164,14 +165,14 @@ class LinkBasedFormulation(Formulation):
             prob.linear_constraints.add(rhs=[1], senses=['L'], names=['STCon' + pairname])
             # Constraint for generating K node-disjoint paths (note that this has no effect for K = 1)
             disjoint_con_names = []
-            for u in rep_nodes + [q[0]]:
+            for u in rep_nodes + new_rep_nodes + [q[0]]:
                 disjoint_con_names.append('DisLinkCon' + pairname + '_' + u)
             num_cons = len(disjoint_con_names)
             prob.linear_constraints.add(rhs=[1] * num_cons, senses=['L'] * num_cons, names=disjoint_con_names)
             for k in range(1, self.K + 1):
                 # Each source should have exactly one outgoing arc
                 prob.linear_constraints.add(rhs=[1], senses=['E'], names=['SourceCon' + pairname + '#' + str(k)])
-                flow_cons_names = ['FlowCon' + pairname + "_" + s + '#' + str(k) for s in rep_nodes]
+                flow_cons_names = ['FlowCon' + pairname + "_" + s + '#' + str(k) for s in rep_nodes + new_rep_nodes]
                 # Each regular node should have equal inflow and outflow
                 prob.linear_constraints.add(rhs=[0] * num_repeater_nodes, senses=['E'] * num_repeater_nodes,
                                             names=flow_cons_names)
@@ -191,11 +192,29 @@ class LinkBasedFormulation(Formulation):
         # we actually implement sum_{q in Q} sum_{v: (u, v) in E_q} sum_{K = 1}^K x_{uv}^{q,K} - D y_u <= 0 since
         # all decision variables must be on the left-hand side for CPLEX.
         var_names = ['y_' + i for i in rep_nodes]
+        print("***** " , len(var_names))
         # Node that if we want to add 6 variables, we need to have 6 separate SparsePairs
         link_constr_column = []
         [link_constr_column.extend([cplex.SparsePair(ind=['LinkXYCon_' + i], val=[-self.D])]) for i in rep_nodes]
         self.cplex.variables.add(obj=[1.0] * len(rep_nodes), names=var_names, ub=[1.0] * len(rep_nodes),
                                  types=['B'] * len(rep_nodes), columns=link_constr_column)
+
+
+        # ---------------- for new repeaters ------------
+        new_rep_nodes = self.graph_container.new_possible_rep_nodes
+        # Add y_i variables with a column only in the x-y linking constraints and the objective function. Note that
+        # we actually implement sum_{q in Q} sum_{v: (u, v) in E_q} sum_{K = 1}^K x_{uv}^{q,K} - D y_u <= 0 since
+        # all decision variables must be on the left-hand side for CPLEX.
+        new_var_names = ['y_' + i for i in new_rep_nodes]
+        # Node that if we want to add 6 variables, we need to have 6 separate SparsePairs
+        new_link_constr_column = []
+
+        [new_link_constr_column.extend([cplex.SparsePair(ind=['LinkXYCon_' + i], val=[-self.D])]) for i in new_rep_nodes]
+        self.cplex.variables.add(obj=[2.0] * len(new_rep_nodes), names=new_var_names, ub=[2.0] * len(new_rep_nodes),
+                                 types=['B'] * len(new_rep_nodes), columns=new_link_constr_column)
+        rep_nodes.extend(new_rep_nodes)
+        # ---------------- for new repeaters end ------------
+
         # Start with finding shortest paths once and store them in a dictionary for later use
         shortest_path_dict = {}
         for i in rep_nodes:
