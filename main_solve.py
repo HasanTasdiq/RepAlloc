@@ -100,7 +100,7 @@ def solve_gml(network_name):
                                        number_of_modes=1000,
                                        swap_probability=.5)
     G = read_graph_from_gml(network_name, draw=True)
-    prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=50, D=6, K=1,
+    prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=500, D=6, K=1,
                                 alpha=1 / 75000)
     sol, comp_time = prog.solve()
     print("Computation Time:", comp_time)
