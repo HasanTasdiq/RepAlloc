@@ -337,9 +337,10 @@ class Solution:
         avg_edge_connectivity = total_edge_connectivity / self.formulation.graph_container.num_unique_pairs
         return minimum_edge_connectivity, avg_edge_connectivity
     def write_output(self):
-        fo = open("output.txt" , "a")
+        print("number of repeaters needed: " , len(self.repeater_nodes_chosen))
+        fo = open("output.txt" , "w")
         if self.repeater_nodes_chosen:
             for node in self.repeater_nodes_chosen:
-                fo.write(str(node) + "\n")
+                fo.write(str(node) + " " +  str(self.formulation.graph_container.graph.nodes[node]['Latitude']) + " " + str(self.formulation.graph_container.graph.nodes[node]['Longitude']) + "\n")
 
         fo.close()

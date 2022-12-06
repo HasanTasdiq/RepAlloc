@@ -37,7 +37,7 @@ class GraphContainer:
         self.new_nodes = []
         self.possible_rep_nodes = []
         self.new_possible_rep_nodes = []
-        self.add_quantum_repeater(graph , 130)
+        self.add_quantum_repeater(graph , 132)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
@@ -45,7 +45,6 @@ class GraphContainer:
                 self.new_possible_rep_nodes.append(node)
             else:
                 self.possible_rep_nodes.append(node)
-        print("****^^^ " , len(self.new_possible_rep_nodes) , len(self.possible_rep_nodes))
         self.num_end_nodes = len(self.end_nodes)
         if self.num_end_nodes == 0:
             raise ValueError("Must have at least one city.")
@@ -121,12 +120,11 @@ class GraphContainer:
         q_node_edges = []
         pos = nx.get_node_attributes(G, 'pos')
         done_dest_node = {}
-        end_nodes = ["Detroit" , "Pittsburgh"]
+       
         for i, j in G.edges():
 
             length = G[i][j]['length']
-            if i in end_nodes or j in end_nodes:
-                print("eeennnddd " , i , j , length)
+            
             if length > L_max :
             # if length > L_max and (not (j in done_dest_node)):
                 lat1 = G.nodes[i]['Latitude']
@@ -170,42 +168,41 @@ def read_graph_from_gml(file, draw=False):
 
     file_name = file[0:-4]
     print("reading from: " , file_name)
-    # G = nx.read_gml(file)
-  
-    if file_name == 'Surfnet':
-        # The Dutch Topology Zoo dataset
-        end_node_list = ["Middelburg", "Groningen", "Maastricht", "Enschede", "Delft", "Amsterdam", "Utrecht", "Den_Helder"]
-    elif file_name == "SurfnetFiberdata":
-        end_node_list = ["Asd001b", "Mt001a", "GN001A", "DT001A"]
-    elif file_name == "SurfnetCore":
-        end_node_list = ["Amsterdam 1", "Delft 1", "Groningen 1", "Maastricht", "Enschede 2"]
-    elif file_name == "Atmnet":
-        end_node_list = [ "Detroit", "Pittsburgh" , "Houston"]
-    elif file_name == "us_net":
-            end_node_list = ["N1520743" , "N365620" , "N1422231" , "N1372536"] # las vegas
-    elif file_name == "us_net105":
-            end_node_list = ["N525796" , "N525656"  , "N525773" , "N525700"]
-    elif file_name == "us_netNV":
-            end_node_list = ["N43340" , "N24171984" , "N31868" , "N2498825" ]
-    elif file_name == "us_netNY":
-            end_node_list = ["N79835126" , "N84496333" , "N50410"  ]
-    elif file_name == "us_netUT":
-            end_node_list = ["N12408" , "N61311" , "N3941087"  ]
-    elif file_name == "es_net":
-            end_node_list = ["CHIC" , "ATLA" ]
-    elif file_name == 'Colt':
-        # The European Topology Zoo dataset
-        # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),
-        #              MPQ (Garching [DE] -> Munich), NBI (Copenhagen), QuTech (Delft -> The Hague), UOB (Basel),
-        #              UOG (Geneva)
-        # NOTE: Graching replaced by Munich, Delft by The Hague
-        end_node_list = ['Innsbruck', 'Paris', 'Barcelona', 'Lisbon', 'Copenhagen', 'TheHague', 'Basel', 'Geneva',
-                         'Stuttgart']
-    else:
-        raise NotImplementedError("Dataset {} not implemented (no city list defined)".format(file_name))
-    print("end nodes " , end_node_list)
     G = nx.read_gml(file)
+  
+    # if file_name == 'Surfnet':
+    #     # The Dutch Topology Zoo dataset
+    #     end_node_list = ["Middelburg", "Groningen", "Maastricht", "Enschede", "Delft", "Amsterdam", "Utrecht", "Den_Helder"]
+    # elif file_name == "SurfnetFiberdata":
+    #     end_node_list = ["Asd001b", "Mt001a", "GN001A", "DT001A"]
+    # elif file_name == "SurfnetCore":
+    #     end_node_list = ["Amsterdam 1", "Delft 1", "Groningen 1", "Maastricht", "Enschede 2"]
+    # elif file_name == "Atmnet":
+    #     end_node_list = [ "Detroit", "Pittsburgh" , "Houston"]
+    # elif file_name == "us_net":
+    #         end_node_list = ["N1520743" , "N365620" , "N1422231" , "N1372536"] # las vegas
+    # elif file_name == "us_net105":
+    #         end_node_list = ["N525796" , "N525656"  , "N525773" , "N525700"]
+    # elif file_name == "us_netNV":
+    #         end_node_list = ["N43340" , "N24171984" , "N31868" , "N2498825" ]
+    # elif file_name == "us_netNY":
+    #         end_node_list = ["N79835126" , "N84496333" , "N50410"  ]
+    # elif file_name == "us_netUT":
+    #         end_node_list = ["N12408" , "N61311" , "N3941087"  ]
+    # elif file_name == "es_net":
+    #         end_node_list = ["PNNL" , "CHIC" , "ATLA" ]
+    # elif file_name == 'Colt':
+    #     # The European Topology Zoo dataset
+    #     # Use QIA members: IQOQI, UOI (Innsbruck), CNRS (Paris), ICFO (Barcelona), IT (Lisbon),
+    #     #              MPQ (Garching [DE] -> Munich), NBI (Copenhagen), QuTech (Delft -> The Hague), UOB (Basel),
+    #     #              UOG (Geneva)
+    #     # NOTE: Graching replaced by Munich, Delft by The Hague
+    #     end_node_list = ['Innsbruck', 'Paris', 'Barcelona', 'Lisbon', 'Copenhagen', 'TheHague', 'Basel', 'Geneva',
+    #                      'Stuttgart']
+    # else:
+    #     raise NotImplementedError("Dataset {} not implemented (no city list defined)".format(file_name))
 
+    add_end_nodes(G)
     pos = {}
     with_lon = False
     for node, nodedata in G.nodes.items():
@@ -216,9 +213,7 @@ def read_graph_from_gml(file, draw=False):
             pos[node] = [nodedata['Longitude'], nodedata['Latitude']]
         else:
             raise ValueError("Cannot determine node position.")
-        if node in end_node_list:
-            nodedata['type'] = 'end_node'
-        else:
+        if 'type' not in nodedata or nodedata['type'] != 'end_node':
             nodedata['type'] = 'repeater_node'
 
 
@@ -236,7 +231,29 @@ def read_graph_from_gml(file, draw=False):
         draw_graph(G)
     return G
 
+def add_end_nodes(graph):
 
+    end_node_list = []
+    end_node_edges = []
+    for node, nodedata in graph.nodes.items():
+        lat1 = graph.nodes[node]['Latitude']
+        lon1 = graph.nodes[node]['Longitude']
+        end_node = "EN_" + node
+        node_data = {}
+        lat3 , lon3 = get_intermediate_point(lat1 , lon1 , 0 , 0 , 1)
+        node_data['node'] = end_node
+        node_data['Latitude'] = float(lat3)
+        node_data['Longitude'] = float(lon3)
+
+        end_node_list.append(node_data)
+        end_node_edges.append((node , end_node))
+    
+    for node_data in end_node_list:
+        graph.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
+        graph.nodes[node_data['node']]['type'] = 'end_node'
+
+
+    graph.add_edges_from(end_node_edges)
 
 
 
@@ -258,14 +275,6 @@ def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
 
     return φ3/constant , λ3/constant
 
-    # a = np.sin(0 * angular) / np.sin(angular)
-    # b = np.sin(1 * angular) / np.sin(angular)
-    # x = a * np.cos(lat1* constant) * np.cos(lon1* constant) + b * np.cos(lat2* constant) * np.cos(lon2* constant)
-    # y = a * np.cos(lat1* constant) * np.sin(lon1* constant) + b * np.cos(lat2* constant) * np.sin(lon2* constant)
-    # z = a * np.sin(lat1* constant) + b * np.sin(lat2* constant)
-    # lat3 = np.arctan2(z, np.sqrt(x * x + y * y))
-    # lon3 = np.arctan2(y, x)
-    # return lat3/constant , lon3/constant
 
 
 

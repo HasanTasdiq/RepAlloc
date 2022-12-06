@@ -202,13 +202,9 @@ class LinkBasedFormulation(Formulation):
 
         # ---------------- for new repeaters ------------
         new_rep_nodes = self.graph_container.new_possible_rep_nodes
-        # Add y_i variables with a column only in the x-y linking constraints and the objective function. Note that
-        # we actually implement sum_{q in Q} sum_{v: (u, v) in E_q} sum_{K = 1}^K x_{uv}^{q,K} - D y_u <= 0 since
-        # all decision variables must be on the left-hand side for CPLEX.
+ 
         new_var_names = ['y_' + i for i in new_rep_nodes]
-        # Node that if we want to add 6 variables, we need to have 6 separate SparsePairs
         new_link_constr_column = []
-
         [new_link_constr_column.extend([cplex.SparsePair(ind=['LinkXYCon_' + i], val=[-self.D])]) for i in new_rep_nodes]
         self.cplex.variables.add(obj=[2.0] * len(new_rep_nodes), names=new_var_names, ub=[2.0] * len(new_rep_nodes),
                                  types=['B'] * len(new_rep_nodes), columns=new_link_constr_column)
