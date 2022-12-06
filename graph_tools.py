@@ -31,13 +31,13 @@ class GraphContainer:
     num_unique_pairs : int
         The total number of unique source-destination pairs, so the sie of the set Q.
     """
-    def __init__(self, graph):
+    def __init__(self, graph, L_max):
         self.graph = graph
         self.end_nodes = []
         self.new_nodes = []
         self.possible_rep_nodes = []
         self.new_possible_rep_nodes = []
-        self.add_quantum_repeater(graph , 132)
+        self.add_quantum_repeater(graph , L_max-5)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
