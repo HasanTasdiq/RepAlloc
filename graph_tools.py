@@ -37,7 +37,7 @@ class GraphContainer:
         self.new_nodes = []
         self.possible_rep_nodes = []
         self.new_possible_rep_nodes = []
-        self.add_quantum_repeater(graph , L_max-5)
+        self.add_quantum_repeater(graph , L_max-10)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
@@ -213,8 +213,14 @@ def read_graph_from_gml(file, draw=False):
             pos[node] = [nodedata['Longitude'], nodedata['Latitude']]
         else:
             raise ValueError("Cannot determine node position.")
+
         if 'type' not in nodedata or nodedata['type'] != 'end_node':
             nodedata['type'] = 'repeater_node'
+        # if node in end_node_list:
+        #     nodedata['type'] = 'end_node'
+        # else:
+        #     nodedata['type'] = 'repeater_node'
+
 
 
             # Add length parameter to edges if this is not defined yet
@@ -235,18 +241,23 @@ def add_end_nodes(graph):
 
     end_node_list = []
     end_node_edges = []
+    count = 0
     for node, nodedata in graph.nodes.items():
         lat1 = graph.nodes[node]['Latitude']
         lon1 = graph.nodes[node]['Longitude']
         end_node = "EN_" + node
         node_data = {}
-        lat3 , lon3 = get_intermediate_point(lat1 , lon1 , 0 , 0 , 1)
+        lat3 , lon3 = get_intermediate_point(lat1 , lon1 , 0 , 0 , 100)
         node_data['node'] = end_node
         node_data['Latitude'] = float(lat3)
         node_data['Longitude'] = float(lon3)
 
         end_node_list.append(node_data)
         end_node_edges.append((node , end_node))
+
+        if count > 8:
+            break
+        count += 1
     
     for node_data in end_node_list:
         graph.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])

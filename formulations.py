@@ -52,10 +52,10 @@ class Formulation:
         self.L_max = L_max
         if D < 0:
             raise ValueError("D must be a positive integer.")
-        # elif D > self.graph_container.num_unique_pairs:
-        #     print("Value of D exceeds the total number of source-destination pairs {}. Manually set to {}".format(
-        #         self.graph_container.num_unique_pairs, self.graph_container.num_unique_pairs))
-        #     D = self.graph_container.num_unique_pairs
+        elif D > self.graph_container.num_unique_pairs:
+            print("Value of D exceeds the total number of source-destination pairs {}. Manually set to {}".format(
+                self.graph_container.num_unique_pairs, self.graph_container.num_unique_pairs))
+            D = self.graph_container.num_unique_pairs
         self.D = D
         if K < 1 or K > self.graph_container.num_repeater_nodes + 1:
             raise ValueError("K must be a positive integer that cannot exceed the total number of repeaters plus one.")
