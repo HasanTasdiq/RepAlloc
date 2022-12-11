@@ -83,6 +83,7 @@ def surfnet_solve():
                                        elementary_link_fidelity=0.99,
                                        number_of_modes=1000,
                                        swap_probability=.5)
+    
     G = read_graph_from_gml('SurfnetCore.gml', draw=True)
     prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=N_max, D=4, K=2,
                                 alpha=1 / 75000)
@@ -101,13 +102,18 @@ def solve_gml(network_name):
                                        swap_probability=.5)
     L_max = 136
     N_max = 1000
-    G = read_graph_from_gml(network_name, draw=True)
-    prog = LinkBasedFormulation(graph_container=GraphContainer(G , L_max), L_max=L_max, N_max=N_max, D=1000, K=1,
-                                alpha=1 / 7500000)
-    sol, comp_time = prog.solve()
-    print("Computation Time:", comp_time)
-    sol.draw_physical_solution_graph()
-    sol.write_output()
+    it = 0
+    chosen_repeaters = set()
+    while it < 10:
+
+        G = read_graph_from_gml('SurfnetCore.gml', False , it)
+        prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=N_max, D=1000, K=1,
+                                alpha=1 / 75000)
+        sol, comp_time = prog.solve()
+        print("Computation Time:", comp_time , 'for' , it)
+        chosen_repeaters.update(sol.repeater_nodes_chosen)
+        it +=1
+    print('len of solution ' , len(chosen_repeaters))
 
 if __name__ == "__main__":
     # surfnet_solve()

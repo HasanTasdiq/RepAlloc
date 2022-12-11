@@ -5,6 +5,7 @@ import networkx as nx
 import itertools
 import ast
 
+considered_nodes = []
 
 class GraphContainer:
     """
@@ -164,7 +165,7 @@ class GraphContainer:
         draw_graph(G)
 
 
-def read_graph_from_gml(file, draw=False):
+def read_graph_from_gml(file, draw=False , it = 0):
 
     file_name = file[0:-4]
     print("reading from: " , file_name)
@@ -202,7 +203,7 @@ def read_graph_from_gml(file, draw=False):
     # else:
     #     raise NotImplementedError("Dataset {} not implemented (no city list defined)".format(file_name))
 
-    add_end_nodes(G)
+    add_end_nodes(G , it)
     pos = {}
     with_lon = False
     for node, nodedata in G.nodes.items():
@@ -237,12 +238,15 @@ def read_graph_from_gml(file, draw=False):
         draw_graph(G)
     return G
 
-def add_end_nodes(graph):
-
+def add_end_nodes(graph , it):
+    print('running.. ' , it)
     end_node_list = []
     end_node_edges = []
     count = 0
-    for node, nodedata in graph.nodes.items():
+    global considered_nodes
+    if len(considered_nodes) == 0:
+        considered_nodes = list(itertools.combinations(graph.nodes(), 10))
+    for node in considered_nodes[it]:
         lat1 = graph.nodes[node]['Latitude']
         lon1 = graph.nodes[node]['Longitude']
         end_node = "EN_" + node
