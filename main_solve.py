@@ -2,7 +2,10 @@ from formulations import PathBasedFormulation, LinkBasedFormulation
 from graph_tools import GraphContainer, create_graph_and_partition, read_graph_from_gml, create_graph_on_unit_cube
 from determine_Lmax_Nmax import max_length_and_rate
 import numpy as np
+import threading 
 
+lock = threading.Lock()
+chosen_repeaters = set()
 
 def solve_from_gml(filename, L_max, N_max, D, K, alpha):
     """Read a data set from gml file and plot the solution. Only supports 'Surfnet.gml' or 'Colt.gml'."""
@@ -94,7 +97,7 @@ def surfnet_solve():
 
     # sol.draw_virtual_solution_graph()
 
-def solve_gml(network_name):
+def solve_gml(network_name , thread_no):
     L_max, N_max = max_length_and_rate(target_fidelity=0.93,
                                        target_rate=1,
                                        elementary_link_fidelity=0.99,
@@ -102,22 +105,42 @@ def solve_gml(network_name):
                                        swap_probability=.5)
     L_max = 136
     N_max = 1000
-    it = 0
-    chosen_repeaters = set()
-    while it < 100:
-
+    it = thread_no * 50
+    
+    while it < thread_no * 50 + 50:
+        if it >= 1953:
+            return
         G = read_graph_from_gml(network_name, False , it)
         prog = LinkBasedFormulation(graph_container=GraphContainer(G , L_max), L_max=L_max, N_max=N_max, D=1000, K=1,
                                 alpha=1 / 75000)
         sol, comp_time = prog.solve()
         print("Computation Time:", comp_time , 'for' , it)
+        lock.acquire()
+        global chosen_repeaters
         chosen_repeaters.update(sol.repeater_nodes_chosen)
+        lock.acquire()
         it +=1
+    
+
+def solve_with_thread(network_name):
+    threads = list()
+    for index in range(20):
+        print("Main    : create and start thread ", index)
+        x = threading.Thread(target=solve_gml, args=(network_name, index ,))
+        threads.append(x)
+        x.start()
+
+    for index, thread in enumerate(threads):
+        print("Main    : before joining thread ", index)
+        thread.join()
+        print("====== Main    : thread" , index , " done")
+
     print('len of solution ' , len(chosen_repeaters))
 
 if __name__ == "__main__":
     # surfnet_solve()
-    solve_gml('es_net.gml')
+    # solve_gml('es_net.gml' , 0)
+    solve_with_thread('es_net.gml')
     # solve_from_gml("Colt.gml", L_max=900, N_max=6, D=6, K=1, alpha=1 / 75000)
     # solve_on_unit_cube(L_max=0.9, N_max=3, D=6, K=1)
     # solve_with_random_graph()

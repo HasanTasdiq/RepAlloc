@@ -162,7 +162,7 @@ class GraphContainer:
 
         print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
 
-        draw_graph(G)
+        # draw_graph(G)
 
 
 def read_graph_from_gml(file, draw=False , it = 0):
@@ -245,9 +245,12 @@ def add_end_nodes(graph , it):
     count = 0
     current_nodes = []
     global considered_nodes
+
     if len(considered_nodes) == 0:
         considered_nodes = list(itertools.combinations(graph.nodes(), 2))
-        current_nodes = list(considered_nodes[it])
+
+    if it >= len(considered_nodes):
+        return
     current_nodes = list(considered_nodes[it])
 
     print(current_nodes)
