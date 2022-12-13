@@ -114,7 +114,6 @@ class GraphContainer:
         print("Minimum edge length is ", min_length)
 
     def add_quantum_repeater(self, G , L_max):
-        print("====================== number of nodes 1 " , G.number_of_nodes() , " ===================================")
 
         q_node  = 0
         q_node_list = []
@@ -160,7 +159,6 @@ class GraphContainer:
         G.add_edges_from(q_node_edges)
         nx.set_node_attributes(G, pos, name='pos')
 
-        print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
 
         # draw_graph(G)
 
@@ -255,8 +253,7 @@ def add_end_nodes(graph , it):
 
     print(current_nodes)
     for node in current_nodes:
-        print(node)
-        print(graph.nodes[node])
+
         lat1 = graph.nodes[node]['Latitude']
         lon1 = graph.nodes[node]['Longitude']
         end_node = "EN_" + node

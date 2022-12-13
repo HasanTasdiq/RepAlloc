@@ -192,7 +192,6 @@ class LinkBasedFormulation(Formulation):
         # we actually implement sum_{q in Q} sum_{v: (u, v) in E_q} sum_{K = 1}^K x_{uv}^{q,K} - D y_u <= 0 since
         # all decision variables must be on the left-hand side for CPLEX.
         var_names = ['y_' + i for i in rep_nodes]
-        print("***** " , len(var_names))
         # Node that if we want to add 6 variables, we need to have 6 separate SparsePairs
         link_constr_column = []
         [link_constr_column.extend([cplex.SparsePair(ind=['LinkXYCon_' + i], val=[-self.D])]) for i in rep_nodes]

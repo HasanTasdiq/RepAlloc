@@ -112,13 +112,14 @@ def solve_gml(network_name , thread_no):
             return
         G = read_graph_from_gml(network_name, False , it)
         prog = LinkBasedFormulation(graph_container=GraphContainer(G , L_max), L_max=L_max, N_max=N_max, D=1000, K=1,
-                                alpha=1 / 75000)
+                                alpha=1 / 7500000)
         sol, comp_time = prog.solve()
         print("Computation Time:", comp_time , 'for' , it)
         lock.acquire()
         global chosen_repeaters
         chosen_repeaters.update(sol.repeater_nodes_chosen)
-        lock.acquire()
+        lock.release()
+        print("==== set updated for it " , it , " current len for set " , len(chosen_repeaters))
         it +=1
     
 
@@ -130,8 +131,9 @@ def solve_with_thread(network_name):
         threads.append(x)
         x.start()
 
+    print("==== leeeeeeeen " , len(threads))
     for index, thread in enumerate(threads):
-        print("Main    : before joining thread ", index)
+        print("Main    : before joining thread ", thread.get_ident())
         thread.join()
         print("====== Main    : thread" , index , " done")
 
