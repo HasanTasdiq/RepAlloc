@@ -104,7 +104,7 @@ def solve_gml(network_name):
     N_max = 1000
     it = 0
     chosen_repeaters = set()
-    while it < 10:
+    while it < 100:
 
         G = read_graph_from_gml('SurfnetCore.gml', False , it)
         prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=N_max, D=1000, K=1,

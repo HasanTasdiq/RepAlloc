@@ -245,7 +245,7 @@ def add_end_nodes(graph , it):
     count = 0
     global considered_nodes
     if len(considered_nodes) == 0:
-        considered_nodes = list(itertools.combinations(graph.nodes(), 10))
+        considered_nodes = list(itertools.combinations(graph.nodes(), 2))
     for node in considered_nodes[it]:
         lat1 = graph.nodes[node]['Latitude']
         lon1 = graph.nodes[node]['Longitude']
