@@ -105,9 +105,9 @@ def solve_gml(network_name , thread_no):
                                        swap_probability=.5)
     L_max = 136
     N_max = 1000
-    it = thread_no * 50
+    it = thread_no * 100
     
-    while it < thread_no * 50 + 50:
+    while it < thread_no * 100 + 100:
         if it >= 1953:
             return
         G = read_graph_from_gml(network_name, False , it)
