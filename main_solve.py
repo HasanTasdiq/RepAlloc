@@ -117,7 +117,7 @@ def solve_gml(network_name):
 
 if __name__ == "__main__":
     # surfnet_solve()
-    solve_gml('Atmnet.gml')
+    solve_gml('es_net.gml')
     # solve_from_gml("Colt.gml", L_max=900, N_max=6, D=6, K=1, alpha=1 / 75000)
     # solve_on_unit_cube(L_max=0.9, N_max=3, D=6, K=1)
     # solve_with_random_graph()
