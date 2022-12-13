@@ -243,10 +243,17 @@ def add_end_nodes(graph , it):
     end_node_list = []
     end_node_edges = []
     count = 0
+    current_nodes = []
     global considered_nodes
     if len(considered_nodes) == 0:
         considered_nodes = list(itertools.combinations(graph.nodes(), 2))
-    for node in considered_nodes[it]:
+        current_nodes = list(considered_nodes[it])
+    current_nodes = list(considered_nodes[it])
+
+    print(current_nodes)
+    for node in current_nodes:
+        print(node)
+        print(graph.nodes[node])
         lat1 = graph.nodes[node]['Latitude']
         lon1 = graph.nodes[node]['Longitude']
         end_node = "EN_" + node
