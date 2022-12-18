@@ -37,7 +37,7 @@ class GraphContainer:
         self.new_nodes = []
         self.possible_rep_nodes = []
         self.new_possible_rep_nodes = []
-        self.add_quantum_repeater(graph , L_max-10)
+        # self.add_quantum_repeater(graph , L_max-10)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
@@ -202,12 +202,19 @@ def read_graph_from_gml(file, draw=False):
     # else:
     #     raise NotImplementedError("Dataset {} not implemented (no city list defined)".format(file_name))
 
-    add_end_nodes(G)
     pos = {}
+    for node, nodedata in G.nodes.items():
+        if "position" in nodedata:
+            pos[node] = ast.literal_eval(nodedata["position"])
+            nodedata['Longitude'] = ast.literal_eval(nodedata["position"])[0]
+            nodedata['Latitude'] = ast.literal_eval(nodedata["position"])[1]
+    add_end_nodes(G)
+   
     with_lon = False
     for node, nodedata in G.nodes.items():
         if "position" in nodedata:
             pos[node] = ast.literal_eval(nodedata["position"])
+
         elif "Longitude" in nodedata and "Latitude" in nodedata:
             with_lon = True
             pos[node] = [nodedata['Longitude'], nodedata['Latitude']]
@@ -221,7 +228,7 @@ def read_graph_from_gml(file, draw=False):
         # else:
         #     nodedata['type'] = 'repeater_node'
 
-
+    
 
             # Add length parameter to edges if this is not defined yet
     
@@ -247,7 +254,7 @@ def add_end_nodes(graph):
         lon1 = graph.nodes[node]['Longitude']
         end_node = "EN_" + node
         node_data = {}
-        lat3 , lon3 = get_intermediate_point(lat1 , lon1 , 0 , 0 , 100)
+        lat3 , lon3 = get_intermediate_point(lat1 , lon1 , 0 , 0 , 1)
         node_data['node'] = end_node
         node_data['Latitude'] = float(lat3)
         node_data['Longitude'] = float(lon3)
@@ -255,9 +262,9 @@ def add_end_nodes(graph):
         end_node_list.append(node_data)
         end_node_edges.append((node , end_node))
 
-        if count > 8:
-            break
-        count += 1
+        # if count > 8:
+        #     break
+        # count += 1
     
     for node_data in end_node_list:
         graph.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
