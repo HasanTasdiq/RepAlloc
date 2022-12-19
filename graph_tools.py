@@ -157,6 +157,9 @@ class GraphContainer:
             self.new_nodes.append(node_data['node'])
 
         G.add_edges_from(q_node_edges)
+        for i, j in G.edges():
+            if 'length' not in G[i][j]:
+                _compute_dist_lat_lon(G)
         nx.set_node_attributes(G, pos, name='pos')
 
         print("====================== number of nodes 2 " , G.number_of_nodes() , " ===================================")
@@ -262,9 +265,9 @@ def add_end_nodes(graph):
         end_node_list.append(node_data)
         end_node_edges.append((node , end_node))
 
-        # if count > 8:
-        #     break
-        # count += 1
+        if count > 2:
+            break
+        count += 1
     
     for node_data in end_node_list:
         graph.add_node(node_data['node'], Longitude=node_data['Longitude'] , Latitude=node_data['Latitude'])
