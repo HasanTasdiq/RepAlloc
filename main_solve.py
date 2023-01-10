@@ -2,6 +2,8 @@ from formulations import PathBasedFormulation, LinkBasedFormulation
 from graph_tools import GraphContainer, create_graph_and_partition, read_graph_from_gml, create_graph_on_unit_cube
 from determine_Lmax_Nmax import max_length_and_rate
 import numpy as np
+import time
+
 
 
 def solve_from_gml(filename, L_max, N_max, D, K, alpha):
@@ -110,9 +112,16 @@ def solve_gml(network_name):
     sol.write_output()
 
 if __name__ == "__main__":
+    start = time.time()
+
+
     # surfnet_solve()
-    solve_gml('SurfnetCore.gml')
+    solve_gml('Colt.gml')
     # solve_from_gml("Colt.gml", L_max=900, N_max=6, D=6, K=1, alpha=1 / 75000)
     # solve_on_unit_cube(L_max=0.9, N_max=3, D=6, K=1)
     # solve_with_random_graph()
     # compare_formulations()
+
+    end = time.time()
+
+    print("total time taken:" , end - start , "sec")
