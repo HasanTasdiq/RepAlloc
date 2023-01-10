@@ -272,7 +272,7 @@ class Solution:
                                            label="End Node", linewidths=3)
         end_nodes.set_edgecolor('k')
         # Then draw the repeater nodes
-        self.repeater_nodes_chosen = ['Zwolle 1', 'Nijmegen 1', 'Utrecht 1']
+        # self.repeater_nodes_chosen = ['Zwolle 1', 'Nijmegen 1', 'Utrecht 1']
         if self.repeater_nodes_chosen:
             rep_nodes = nx.draw_networkx_nodes(G=self.formulation.graph_container.graph, pos=pos, node_size=150,
                                                node_shape='h', nodelist=self.repeater_nodes_chosen,
