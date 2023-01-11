@@ -37,7 +37,7 @@ class GraphContainer:
         self.new_nodes = []
         self.possible_rep_nodes = []
         self.new_possible_rep_nodes = []
-        # self.add_quantum_repeater(graph , L_max-10)
+        self.add_quantum_repeater(graph , L_max-10)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
