@@ -104,7 +104,7 @@ def solve_gml(network_name):
     L_max = 130
     N_max = 1000
     G = read_graph_from_gml(network_name, draw=True)
-    prog = LinkBasedFormulation(graph_container=GraphContainer(G , L_max), L_max=L_max, N_max=N_max, D=200, K=1,
+    prog = LinkBasedFormulation(graph_container=GraphContainer(G , L_max), L_max=L_max, N_max=N_max, D=200, K=2,
                                 alpha=1 / 7500000)
     sol, comp_time = prog.solve()
     print("Computation Time:", comp_time)
@@ -116,7 +116,7 @@ if __name__ == "__main__":
 
 
     # surfnet_solve()
-    solve_gml('Colt.gml')
+    solve_gml('es_net.gml')
     # solve_from_gml("Colt.gml", L_max=900, N_max=6, D=6, K=1, alpha=1 / 75000)
     # solve_on_unit_cube(L_max=0.9, N_max=3, D=6, K=1)
     # solve_with_random_graph()
