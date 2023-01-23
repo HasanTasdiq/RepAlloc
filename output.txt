@@ -1,3 +1,5 @@
 Zwolle 1 52.57 6.18
-Nijmegen 2 51.82 5.78
-Deventer 52.22 6.18
+Almere 52.42 5.36
+Utrecht 1 52.02 4.96
+Wageningen 2 52.02 5.58
+Breda 1 51.57 4.76

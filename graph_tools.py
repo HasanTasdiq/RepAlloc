@@ -248,13 +248,15 @@ def read_graph_from_gml(file, draw=False):
     return G
 
 def add_end_nodes(graph):
-    center_nodes = {'SUNN', 'KANS', 'LASV', 'BOST', 'NASH', 'EQXDC4', 'EQXDA3', 'ALBQ', 'SEAT', 'CHIC', 'DENV', 'ELPA', 'ATLA', 'SAND', 'BOIS', 'LOSA', 'SALT', 'NEWY32AOA', 'STAR', 'CHAT', 'SACR', 'WASH', 'HOUS'}
+    # center_nodes = {'Hilversum', 'Groningen 1', 'Venlo'}
+    center_nodes = {"R'dam 2", 'Venlo', 'Apeldoorn', 'Wageningen 1', "R'dam 1", 'Groningen 1', 'Enschede 1', "A'dam 2", 'Den Bosch'}
+
     end_node_list = []
     end_node_edges = []
     count = 0
     for node, nodedata in graph.nodes.items():
-        if node not in center_nodes:
-            continue
+        # if node not in center_nodes:
+        #     continue
         lat1 = graph.nodes[node]['Latitude']
         lon1 = graph.nodes[node]['Longitude']
         end_node = "EN_" + node
