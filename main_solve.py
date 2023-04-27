@@ -22,10 +22,10 @@ def solve_from_gml(filename, L_max, N_max, D, K, alpha):
 def solve_on_unit_cube(L_max, N_max, D, K):
     """Create a random graph with 4 fixed end nodes on the vertices of a unit cube and 10 repeater nodes."""
     G = create_graph_on_unit_cube(n_repeaters=10, radius=0.6, draw=False, seed=9)
-    prog = LinkBasedFormulation(graph_container=GraphContainer(G), L_max=L_max, N_max=N_max, D=D, K=K, alpha=0)
+    prog = LinkBasedFormulation(graph_container=GraphContainer(G , L_max), L_max=L_max, N_max=N_max, D=D, K=K, alpha=0)
     sol, _ = prog.solve()
     # sol.draw_virtual_solution_graph()
-    sol.draw_physical_solution_graph()
+    # sol.draw_physical_solution_graph()
     # sol.print_path_data()
 
 
@@ -101,14 +101,14 @@ def solve_gml(network_name):
                                        elementary_link_fidelity=0.99,
                                        number_of_modes=1000,
                                        swap_probability=.5)
-    L_max = 80
+    L_max = 130
     N_max = 1000
     G = read_graph_from_gml(network_name, draw=True)
     prog = LinkBasedFormulation(graph_container=GraphContainer(G , L_max), L_max=L_max, N_max=N_max, D=2000, K=1,
                                 alpha=1 / 7500000)
     sol, comp_time = prog.solve()
     print("Computation Time:", comp_time)
-    sol.draw_physical_solution_graph()
+    # sol.draw_physical_solution_graph()
     sol.write_output()
 
 if __name__ == "__main__":
@@ -116,9 +116,9 @@ if __name__ == "__main__":
 
 
     # surfnet_solve()
-    solve_gml('SurfnetCore.gml')
+    # solve_gml('Atmnet.gml')
     # solve_from_gml("Colt.gml", L_max=900, N_max=6, D=6, K=1, alpha=1 / 75000)
-    # solve_on_unit_cube(L_max=0.9, N_max=3, D=6, K=1)
+    solve_on_unit_cube(L_max=0.6, N_max=300, D=600, K=2)
     # solve_with_random_graph()
     # compare_formulations()
 

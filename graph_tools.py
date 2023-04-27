@@ -37,7 +37,7 @@ class GraphContainer:
         self.new_nodes = []
         self.possible_rep_nodes = []
         self.new_possible_rep_nodes = []
-        self.add_quantum_repeater(graph , L_max-10)
+        # self.add_quantum_repeater(graph , L_max-10)
         for node, nodedata in graph.nodes.items():
             if nodedata["type"] == 'end_node':
                 self.end_nodes.append(node)
@@ -248,15 +248,15 @@ def read_graph_from_gml(file, draw=False):
     return G
 
 def add_end_nodes(graph):
-    # center_nodes = {'Hilversum', 'Groningen 1', 'Venlo'}
-    center_nodes = {"R'dam 2", 'Venlo', 'Apeldoorn', 'Wageningen 1', "R'dam 1", 'Groningen 1', 'Enschede 1', "A'dam 2", 'Den Bosch'}
+    center_nodes = {'Den Haag 2', 'Groningen 1', 'Heerlen' , 'Dordrecht'}
+    # center_nodes = {"R'dam 2", 'Venlo', 'Apeldoorn', 'Wageningen 1', "R'dam 1", 'Groningen 1', 'Enschede 1', "A'dam 2", 'Den Bosch'}
 
     end_node_list = []
     end_node_edges = []
     count = 0
     for node, nodedata in graph.nodes.items():
-        # if node not in center_nodes:
-        #     continue
+        if node not in center_nodes:
+            continue
         lat1 = graph.nodes[node]['Latitude']
         lon1 = graph.nodes[node]['Longitude']
         end_node = "EN_" + node
@@ -280,6 +280,33 @@ def add_end_nodes(graph):
 
     graph.add_edges_from(end_node_edges)
 
+def add_end_nodes_cube(graph):
+
+    end_node_list = []
+    end_node_edges = []
+    count = 0
+    for node, nodedata in graph.nodes.items():
+        pos = graph.nodes[node]['pos']
+        end_node = "EN_" + node
+        node_data = {}
+        node_data['node'] = end_node
+        node_data['pos'] = pos
+
+        end_node_list.append(node_data)
+        end_node_edges.append((node , end_node))
+
+        # if count > 2:
+        #     break
+        # count += 1
+    
+    for node_data in end_node_list:
+        graph.add_node(node_data['node'], pos=node_data['pos'] )
+        graph.nodes[node_data['node']]['type'] = 'end_node'
+
+    for node in graph.nodes():
+        graph.nodes[node]['xcoord'] = graph.nodes[node]['pos'][0]
+        graph.nodes[node]['ycoord'] = graph.nodes[node]['pos'][1]
+    graph.add_edges_from(end_node_edges)
 
 
 def get_intermediate_point(lat1 , lon1 , lat2 , lon2 , d):
@@ -312,10 +339,15 @@ def create_graph_on_unit_cube(n_repeaters, radius, draw, seed=2):
         G.nodes[node]['type'] = 'repeater_node'
     color_map = ['blue'] * len(G.nodes)
     # Create the end nodes
-    G.add_node("C", pos=[0, 0], type='end_node')
-    G.add_node("B", pos=[1, 1], type='end_node')
-    G.add_node("A", pos=[0, 1], type='end_node')
-    G.add_node("D", pos=[1, 0], type='end_node')
+    # G.add_node("C", pos=[0, 0], type='end_node')
+    # G.add_node("B", pos=[1, 1], type='end_node')
+    # G.add_node("A", pos=[0, 1], type='end_node')
+    # G.add_node("D", pos=[1, 0], type='end_node')
+
+    G.add_node("C", pos=[0, 0], type='repeater_node')
+    G.add_node("B", pos=[1, 1], type='repeater_node')
+    G.add_node("A", pos=[0, 1], type='repeater_node')
+    G.add_node("D", pos=[1, 0], type='repeater_node')
     G.nodes[3]['pos'] = [0.953, 0.750]
     G.nodes[5]['pos'] = [0.25, 0.50]
     # Manually connect the end nodes to the three nearest nodes
@@ -338,6 +370,7 @@ def create_graph_on_unit_cube(n_repeaters, radius, draw, seed=2):
     # Convert node labels to strings
     label_remapping = {key: str(key) for key in G.nodes() if type(key) is not str}
     G = nx.relabel_nodes(G, label_remapping)
+    add_end_nodes_cube(G)
     if draw:
         draw_graph(G)
     return G
